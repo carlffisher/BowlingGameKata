@@ -16,7 +16,7 @@ namespace BowlingKata
         public int IncrementedIndexBy2;
         public int FrameCount;
         public const int STRLENSPAREBONUS = 22; // == 11 frame game
-        public const int STRLENSTRIKEBONUS = 2; // == 10 frame game + 2 bonus balls
+        public const int STRLENSTRIKEBONUS = 22; // == 10 frame game + 2 bonus balls
 
         public int DummyCalculateGameScore(string StringOfScores, int IncrementedIndexBy2)
         {
@@ -26,10 +26,9 @@ namespace BowlingKata
         public int CalculateGameScore(string StringOfScores, int IncrementedIndexBy2, int incrementedtotal)
         {
             bool SpareBonusBall = false;
-            bool StrikeBonusBall = false;
 
 
-            if (IncrementedIndexBy2 > (StringOfScores.Length-2))
+            if (IncrementedIndexBy2 == (StringOfScores.Length-2)) // Not > than!
             {
                 return incrementedtotal;
             }
@@ -39,38 +38,54 @@ namespace BowlingKata
                 incrementedtotal += 10;
                 IncrementedIndexBy2 += 2;
 
-                if (IncrementedIndexBy2 == (STRLENSTRIKEBONUS - 2))
-                {
-                    StrikeBonusBall = true;
-                }
-
-                if (IncrementedIndexBy2 <= (StringOfScores.Length - 2))
+                if (IncrementedIndexBy2 == (STRLENSTRIKEBONUS-2)) // It's the STRIKE bonus balls ...
                 {
                     if ((StringOfScores[IncrementedIndexBy2] == 'X') || (StringOfScores[IncrementedIndexBy2] == '/'))
                     {
-                        if (!StrikeBonusBall) incrementedtotal += 10;
+                        incrementedtotal += 10;
+                    }
+                    else
+                    {
+                        if (StringOfScores[IncrementedIndexBy2] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]);
+                    }
 
-                        if ((StringOfScores[IncrementedIndexBy2] == 'X') || (StringOfScores[IncrementedIndexBy2] == '/'))
+                    if ((StringOfScores[IncrementedIndexBy2+1] == 'X') || (StringOfScores[IncrementedIndexBy2+1] == '/'))
+                    {
+                        incrementedtotal += 10;
+                    }
+                    else
+                    {
+                        if (StringOfScores[IncrementedIndexBy2+1] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2+1]);
+                    }
+
+                    return incrementedtotal; // ... end of Strike bonus ball
+                }
+
+                if (IncrementedIndexBy2 < (StringOfScores.Length-2))
+                {
+                    if ((StringOfScores[IncrementedIndexBy2] == 'X') || (StringOfScores[IncrementedIndexBy2] == '/'))
+                    {
+                        incrementedtotal += 10;
+
+
+                        if ((StringOfScores[IncrementedIndexBy2 + 2] == 'X') || (StringOfScores[IncrementedIndexBy2 + 2] == '/'))
                         {
-                            if (!StrikeBonusBall) incrementedtotal += 10;
+                            incrementedtotal += 10;
                         }
                         else
                         {
-                            if (!StrikeBonusBall)
-                            {
-                                incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]) + (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2 + 1]);
-                            }
+                            if (StringOfScores[IncrementedIndexBy2 + 2] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2 + 2]);
                         }
                     }
                     else
                     {
-                        if (!StrikeBonusBall)
-                        {
-                           incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]) + (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2 + 1]);
-                        }
+                         if (StringOfScores[IncrementedIndexBy2] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]);
+                         if (StringOfScores[IncrementedIndexBy2+1] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2+1]);
                     }
-                }
 
+
+                }
+                   
                 incrementedtotal = CalculateGameScore(StringOfScores, IncrementedIndexBy2, incrementedtotal);
             }
             else if (StringOfScores[IncrementedIndexBy2] == '/') // It's a SPARE ...
@@ -81,6 +96,7 @@ namespace BowlingKata
                 if (IncrementedIndexBy2 == (STRLENSPAREBONUS - 2))
                 {
                     SpareBonusBall = true;
+                    incrementedtotal += 10;
                 }
 
                 if (IncrementedIndexBy2 <= (StringOfScores.Length - 2))
@@ -93,19 +109,23 @@ namespace BowlingKata
                     {
                         if (!SpareBonusBall)
                         {
-                       //   incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]) + (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2 + 1]);
-                            incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]);
+                            if (StringOfScores[IncrementedIndexBy2] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]);
                         }
                     }
                 }
-                
+
+               //   incrementedtotal += 10;
+               // IncrementedIndexBy2 += 2;
+
                 incrementedtotal = CalculateGameScore(StringOfScores, IncrementedIndexBy2, incrementedtotal);
             }
             else
             {
                 // It's an OPEN frame...
 
-                incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]) + (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2+1]);
+                if (StringOfScores[IncrementedIndexBy2]   != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2]);
+                if (StringOfScores[IncrementedIndexBy2+1] != '-') incrementedtotal += (int)Char.GetNumericValue(StringOfScores[IncrementedIndexBy2+1]);
+
                 IncrementedIndexBy2 += 2;
                 incrementedtotal = CalculateGameScore(StringOfScores, IncrementedIndexBy2, incrementedtotal);
             }
